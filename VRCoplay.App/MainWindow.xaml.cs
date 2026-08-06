@@ -11,12 +11,11 @@ public sealed partial class MainWindow : Window
 {
     private const string Url = "rtsp://127.0.0.1:8554/game";
     private const int SampleRate = 44100, AudioChunkBytes = SampleRate * 2 * 4 / 100;
-    // Look at AMF/QSV. look if better flags
     private static readonly (string Name, string[] Args, bool Cpu)[] Encoders =
     [
         ("NVIDIA NVENC", ["-c:v", "h264_nvenc", "-preset", "p1", "-tune", "ull", "-rc", "constqp", "-qp", "25", "-forced-idr", "1", "-zerolatency", "1", "-delay", "0"], false),
         ("AMD AMF", ["-c:v", "h264_amf", "-usage", "ultralowlatency", "-quality", "speed", "-latency", "1", "-async_depth", "1", "-preanalysis", "0", "-preencode", "0", "-enforce_hrd", "1", "-filler_data", "0", "-vbaq", "0", "-rc", "cbr", "-b:v", "8M", "-maxrate", "8M", "-bufsize", "133k", "-profile:v", "constrained_baseline", "-forced_idr", "1"], false),
-        ("Intel Quick Sync", ["-c:v", "h264_qsv", "-preset", "veryfast", "-async_depth", "1", "-scenario", "remotegaming", "-look_ahead", "0", "-global_quality", "25", "-profile:v", "baseline", "-forced_idr", "1"], true),
+        ("Intel Quick Sync", ["-c:v", "h264_qsv", "-preset", "veryfast", "-async_depth", "1", "-scenario", "remotegaming", "-global_quality", "25", "-profile:v", "baseline", "-forced_idr", "1"], true),
         ("x264 software", ["-c:v", "libx264", "-preset", "ultrafast", "-tune", "zerolatency", "-qp", "25", "-profile:v", "baseline"], true)
     ];
 
@@ -123,7 +122,7 @@ public sealed partial class MainWindow : Window
                     if (includeAudio)
                     {
                         var format = WaveFormat.CreateIeeeFloatWaveFormat(SampleRate, 2);
-                        buffer = new(format, TimeSpan.FromMilliseconds(40)) { ReadFully = true, DiscardOnBufferOverflow = true };
+                        buffer = new(format, TimeSpan.FromMilliseconds(40)) { DiscardOnBufferOverflow = true };
                         // Look at https://github.com/naudio/NAudio/blob/6def00b5a41a7904f3b104eda8f92a1c59be7e5a/src/NAudio.Wasapi/WasapiRecorderBuilder.cs
                         recorder = await new WasapiRecorderBuilder().WithProcessLoopback((uint)target.Pid,
                             ProcessLoopbackMode.IncludeTargetProcessTree).WithFormat(format).WithBufferLength(20)
@@ -209,7 +208,7 @@ public sealed partial class MainWindow : Window
 
     private IEnumerable<string> FfmpegArgs(nint hwnd, bool audio, bool lowLatency)
     {
-        var capture = $"gfxcapture=hwnd={unchecked((ulong)hwnd.ToInt64())}:capture_cursor=1:capture_border=0:display_border=0:max_framerate=60";
+        var capture = $"gfxcapture=hwnd={unchecked((ulong)hwnd.ToInt64())}";
         var args = new List<string> { "-hide_banner", "-loglevel", "warning", "-xerror", "-f", "lavfi", "-i", capture };
         if (audio) args.AddRange(["-f", "f32le", "-ar", SampleRate.ToString(), "-ac", "2", "-i", "pipe:0", "-map", "0:v:0", "-map", "1:a:0"]);
         else args.Add("-an");

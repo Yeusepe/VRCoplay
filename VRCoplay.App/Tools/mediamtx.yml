@@ -1,4 +1,4 @@
-logLevel: info
+# gfxcapture is VFR and can send nothing while the window is static.
 readTimeout: 10m
 writeQueueSize: 256
 
@@ -6,7 +6,6 @@ writeQueueSize: 256
 rtsp: true
 rtspAddress: 127.0.0.1:8554
 rtspTransports: [tcp]
-udpMaxPayloadSize: 1200
 
 rtmp: false
 hls: false
