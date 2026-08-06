@@ -1,0 +1,32 @@
+# Visual Studio and .NET
+.vs/
+**/[Bb]in/
+**/[Oo]bj/
+artifacts/
+*.user
+*.suo
+*.binlog
+
+# Packaging
+**/AppPackages/
+**/BundleArtifacts/
+**/Properties/PublishProfiles/
+**/publish/
+*.nupkg
+*.snupkg
+*.msix
+*.msixupload
+*.appx
+*.appxbundle
+*.appxupload
+*.cer
+*.pfx
+
+# Test/build residue
+**/[Tt]est[Rr]esults/
+*.trx
+*.coverage
+*.coveragexml
+*.log
+.DS_Store
+Thumbs.db

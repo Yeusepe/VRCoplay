@@ -1,0 +1,18 @@
+logLevel: info
+readTimeout: 10m
+writeQueueSize: 256
+
+# This app is a localhost-only publisher. TCP is the proven VRChat path.
+rtsp: true
+rtspAddress: 127.0.0.1:8554
+rtspTransports: [tcp]
+udpMaxPayloadSize: 1200
+
+rtmp: false
+hls: false
+webrtc: false
+srt: false
+moq: false
+
+paths:
+  game:
