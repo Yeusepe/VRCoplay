@@ -25,6 +25,12 @@ The source revision and complete build configuration needed to reproduce and aud
 - Source revision: <https://github.com/naudio/NAudio/tree/6def00b5a41a7904f3b104eda8f92a1c59be7e5a>
 - License: MIT, `Tools/NAudio-LICENSE.txt`
 
+## Vanara
+
+- Packages: `Vanara.PInvoke.DwmApi`, `Vanara.PInvoke.Gdi32`, and `Vanara.Core` 5.0.5
+- Source revision: <https://github.com/dahall/Vanara/tree/624318e1e7e294192581291a1e5f5ee3c3d146e2>
+- License: MIT, `Tools/Vanara-LICENSE.txt`
+
 ## Microsoft Windows App SDK
 
 - Package: `Microsoft.WindowsAppSDK` 2.3.1

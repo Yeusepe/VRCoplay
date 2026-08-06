@@ -1,9 +1,13 @@
 using System.Diagnostics;
 using System.Net.NetworkInformation;
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
+using Vanara.PInvoke;
+using static Vanara.PInvoke.DwmApi;
+using WinRT.Interop;
 
 namespace VRCoplay;
 
@@ -22,17 +26,24 @@ public sealed partial class MainWindow : Window
     private sealed record WindowChoice(int Pid, nint Hwnd, string Label);
 
     private (string Name, string[] Args, bool Cpu)? _encoder;
+    private WindowChoice? _target;
     private CancellationTokenSource? _cts;
     private Task? _loop;
     private Process? _ffmpeg, _server;
     private WasapiRecorder? _recorder;
+    private HTHUMBNAIL _thumbnail;
     private string _lastLine = "";
 
     public MainWindow()
     {
         InitializeComponent();
+        ExtendsContentIntoTitleBar = true; SetTitleBar(AppTitleBar);
+        AppWindow.TitleBar.ButtonBackgroundColor = AppWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+        AppWindow.Resize(new(820, 720));
         RefreshWindows();
-        Closed += (_, _) => StopNow();
+        PreviewHost.Loaded += (_, _) => ShowPreview(); RootPage.SizeChanged += (_, _) => DispatcherQueue.TryEnqueue(UpdatePreview);
+        Scroller.ViewChanged += (_, _) => DispatcherQueue.TryEnqueue(UpdatePreview);
+        Closed += (_, _) => { ClosePreview(); StopNow(); };
     }
 
     private void WindowPicker_DropDownOpened(object sender, object e) => RefreshWindows();
@@ -40,7 +51,6 @@ public sealed partial class MainWindow : Window
 
     private void RefreshWindows()
     {
-        if (_cts is not null) return;
         var previous = WindowPicker.SelectedItem as WindowChoice;
         var windows = new List<WindowChoice>();
         foreach (var process in Process.GetProcesses())
@@ -60,6 +70,39 @@ public sealed partial class MainWindow : Window
         WindowPicker.SelectedItem = items.FirstOrDefault(x => x.Pid == previous?.Pid && x.Hwnd == previous.Hwnd)
                                     ?? items.FirstOrDefault();
     }
+
+    private void WindowPicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        ShowPreview();
+        if (_cts is null || WindowPicker.SelectedItem is not WindowChoice next || IsCurrent(next)) return;
+        _target = next; Show("Switching application...", InfoBarSeverity.Informational);
+        try { if (_ffmpeg is { HasExited: false }) _ffmpeg.Kill(true); } catch { }
+    }
+
+    private void ShowPreview()
+    {
+        // Look at https://learn.microsoft.com/windows/win32/dwm/thumbnail-ovw - DWM owns the live copy.
+        ClosePreview();
+        if (WindowPicker.SelectedItem is not WindowChoice source || PreviewHost.ActualWidth == 0 ||
+            DwmRegisterThumbnail(WindowNative.GetWindowHandle(this), source.Hwnd, out _thumbnail).Failed) return;
+        PreviewEmpty.Visibility = Visibility.Collapsed; UpdatePreview();
+    }
+
+    private void UpdatePreview()
+    {
+        if (_thumbnail.IsNull || DwmQueryThumbnailSourceSize(_thumbnail, out var source).Failed) return;
+        var scale = PreviewHost.XamlRoot.RasterizationScale; var at = PreviewHost.TransformToVisual(null).TransformPoint(new());
+        var availableWidth = PreviewHost.ActualWidth * scale; var availableHeight = PreviewHost.ActualHeight * scale;
+        var fit = Math.Min(availableWidth / source.cx, availableHeight / source.cy);
+        var width = (int)(source.cx * fit); var height = (int)(source.cy * fit);
+        var left = (int)(at.X * scale + (availableWidth - width) / 2); var top = (int)(at.Y * scale + (availableHeight - height) / 2);
+        var properties = new DWM_THUMBNAIL_PROPERTIES {
+            dwFlags = DWM_TNP.DWM_TNP_RECTDESTINATION | DWM_TNP.DWM_TNP_VISIBLE | DWM_TNP.DWM_TNP_OPACITY,
+            rcDestination = new(left, top, left + width, top + height), fVisible = true, opacity = 255 };
+        DwmUpdateThumbnailProperties(_thumbnail, properties);
+    }
+
+    private void ClosePreview() { if (!_thumbnail.IsNull) DwmUnregisterThumbnail(_thumbnail); _thumbnail = default; PreviewEmpty.Visibility = Visibility.Visible; }
 
     private async void Start_Click(object sender, RoutedEventArgs e)
     {
@@ -97,20 +140,22 @@ public sealed partial class MainWindow : Window
         Show("Checking the encoder and starting the local server...", InfoBarSeverity.Informational);
         EnsurePortFree();
         _encoder ??= await PickEncoderAsync(CurrentHandle(target.Pid));
+        _target = target;
         _cts = new CancellationTokenSource();
         _server = StartTool(Tool("mediamtx.exe"), [Tool("mediamtx.yml")]);
         await Task.Delay(500, _cts.Token);
         if (_server.HasExited) throw new InvalidOperationException($"MediaMTX stopped. {_lastLine}");
-        _loop = StreamLoopAsync(target, AudioToggle.IsOn, LowLatencyToggle.IsOn, _cts.Token);
+        _loop = StreamLoopAsync(AudioToggle.IsOn, LowLatencyToggle.IsOn, _cts.Token);
     }
 
-    private async Task StreamLoopAsync(WindowChoice target, bool includeAudio, bool lowLatency, CancellationToken stop)
+    private async Task StreamLoopAsync(bool includeAudio, bool lowLatency, CancellationToken stop)
     {
         var final = "Stopped."; var severity = InfoBarSeverity.Success;
         try
         {
             while (!stop.IsCancellationRequested)
             {
+                var target = _target ?? throw new InvalidOperationException("Choose an application first.");
                 using var iteration = CancellationTokenSource.CreateLinkedTokenSource(stop);
                 WasapiRecorder? recorder = null;
                 Task pump = Task.Delay(Timeout.Infinite, iteration.Token);
@@ -144,9 +189,9 @@ public sealed partial class MainWindow : Window
                     var ffmpegExit = _ffmpeg.WaitForExitAsync(iteration.Token);
                     var targetExit = watched.WaitForExitAsync(iteration.Token);
                     var ended = await Task.WhenAny(ffmpegExit, targetExit, pump, audioFault.Task);
-                    if (ended == targetExit) { final = "The selected application closed."; break; }
-                    if (ended == audioFault.Task) throw await audioFault.Task;
-                    if (ended == pump) await pump;
+                    if (ended == targetExit && IsCurrent(target)) { final = "The selected application closed."; break; }
+                    if (ended == audioFault.Task && IsCurrent(target)) throw await audioFault.Task;
+                    if (ended == pump && IsCurrent(target)) await pump;
                 }
                 finally
                 {
@@ -159,7 +204,8 @@ public sealed partial class MainWindow : Window
                 }
                 if (!stop.IsCancellationRequested)
                 {
-                    Show($"Capture interrupted; restarting... {_lastLine}", InfoBarSeverity.Warning);
+                    if (IsCurrent(target))
+                        Show($"Capture interrupted; restarting... {_lastLine}", InfoBarSeverity.Warning);
                     await Task.Delay(250, stop);
                 }
             }
@@ -267,9 +313,11 @@ public sealed partial class MainWindow : Window
 
     private void SetStreamingControls(bool streaming)
     {
-        WindowPicker.IsEnabled = RefreshButton.IsEnabled = AudioToggle.IsEnabled = LowLatencyToggle.IsEnabled = !streaming;
+        AudioToggle.IsEnabled = LowLatencyToggle.IsEnabled = !streaming;
         StartButton.Content = streaming ? "Stop streaming" : "Start streaming";
     }
+
+    private bool IsCurrent(WindowChoice target) => _target?.Pid == target.Pid && _target.Hwnd == target.Hwnd;
 
     private void Show(string message, InfoBarSeverity severity)
     {
