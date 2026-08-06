@@ -1,5 +1,6 @@
 # Visual Studio and .NET
 .vs/
+.idea/
 **/[Bb]in/
 **/[Oo]bj/
 artifacts/

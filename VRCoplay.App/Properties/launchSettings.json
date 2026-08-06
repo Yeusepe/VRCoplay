@@ -1,8 +1,5 @@
 {
   "profiles": {
-    "VRCoplay (Package)": {
-      "commandName": "MsixPackage"
-    },
     "VRCoplay (Unpackaged)": {
       "commandName": "Project"
     }
