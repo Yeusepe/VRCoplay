@@ -1,0 +1,15 @@
+{
+  "controller_type": "oculus_touch", "name": "VRCoplay - Oculus Touch", "description": "VRCoplay Xbox bridge",
+  "bindings": { "/actions/vrcoplay": { "sources": [
+    { "path": "/user/hand/left/input/joystick", "mode": "joystick", "inputs": { "position": { "output": "/actions/vrcoplay/in/left_stick" }, "click": { "output": "/actions/vrcoplay/in/left_thumb" } } },
+    { "path": "/user/hand/right/input/joystick", "mode": "joystick", "inputs": { "position": { "output": "/actions/vrcoplay/in/right_stick" }, "click": { "output": "/actions/vrcoplay/in/right_thumb" } } },
+    { "path": "/user/hand/left/input/trigger", "mode": "trigger", "inputs": { "pull": { "output": "/actions/vrcoplay/in/left_trigger" } } },
+    { "path": "/user/hand/right/input/trigger", "mode": "trigger", "inputs": { "pull": { "output": "/actions/vrcoplay/in/right_trigger" } } },
+    { "path": "/user/hand/left/input/grip", "mode": "button", "parameters": { "click_activate_threshold": "0.7", "click_deactivate_threshold": "0.55" }, "inputs": { "click": { "output": "/actions/vrcoplay/in/left_shoulder" } } },
+    { "path": "/user/hand/right/input/grip", "mode": "button", "parameters": { "click_activate_threshold": "0.7", "click_deactivate_threshold": "0.55" }, "inputs": { "click": { "output": "/actions/vrcoplay/in/right_shoulder" } } },
+    { "path": "/user/hand/left/input/x", "mode": "button", "inputs": { "click": { "output": "/actions/vrcoplay/in/x" } } },
+    { "path": "/user/hand/left/input/y", "mode": "button", "inputs": { "click": { "output": "/actions/vrcoplay/in/y" } } },
+    { "path": "/user/hand/right/input/a", "mode": "button", "inputs": { "click": { "output": "/actions/vrcoplay/in/a" } } },
+    { "path": "/user/hand/right/input/b", "mode": "button", "inputs": { "click": { "output": "/actions/vrcoplay/in/b" } } }
+  ] } }
+}

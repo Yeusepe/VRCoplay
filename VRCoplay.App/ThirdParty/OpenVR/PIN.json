@@ -1,0 +1,12 @@
+{
+  "repository": "https://github.com/ValveSoftware/openvr",
+  "release": "OpenVR SDK 2.15.6",
+  "tag": "v2.15.6",
+  "commit": "0924064316de3effbcd1acf1e309182a2deb1c05",
+  "files": [
+    { "path": "headers/openvr_api.cs", "blob": "3050761272a0d4191379700cce47ba2c8c17044b", "sha256": "c17e878b7b3b925d1f22ef5382561389c47db8b92019de840705ff5ff28c317a" },
+    { "path": "bin/win64/openvr_api.dll", "blob": "83b201974728158157be0bf6fc3b43caed34ab11", "sha256": "bab8ac6ef64e68a9ca53315b0014d131088584b2efdfa6db511d67ec03cfcb4a" },
+    { "path": "bin/win64/openvr_api.dll.sig", "blob": "8beca1658e6546a219d7e647a51347784f3cccbf", "sha256": "6a47bb6e5e3d6850aef60abf4fb6b6f1799bee65f2af3bbdc89dac00b843bc5b" },
+    { "path": "LICENSE", "blob": "ee83337d7fcb726d14cc10f7dd2fda6799d8a135", "sha256": "f56ff606104d4ef18e617921a75c73ad73b5a1a1d70c69590c29de16919e04ad" }
+  ]
+}

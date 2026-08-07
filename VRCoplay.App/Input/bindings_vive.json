@@ -1,0 +1,16 @@
+{
+  "controller_type": "vive_controller", "name": "VRCoplay - Vive Controller", "description": "VRCoplay Xbox bridge",
+  "bindings": { "/actions/vrcoplay": { "sources": [
+    { "path": "/user/hand/left/input/trackpad", "mode": "trackpad", "parameters": { "deadzone_pct": "40", "maxzone_pct": "90" }, "inputs": { "position": { "output": "/actions/vrcoplay/in/left_stick" } } },
+    { "path": "/user/hand/right/input/trackpad", "mode": "trackpad", "parameters": { "deadzone_pct": "50", "maxzone_pct": "90" }, "inputs": { "position": { "output": "/actions/vrcoplay/in/right_stick" } } },
+    { "path": "/user/hand/left/input/trackpad", "mode": "button", "inputs": { "click": { "output": "/actions/vrcoplay/in/left_thumb" } } },
+    { "path": "/user/hand/right/input/trackpad", "mode": "button", "inputs": { "click": { "output": "/actions/vrcoplay/in/right_thumb" } } },
+    { "path": "/user/hand/right/input/trackpad", "mode": "dpad", "parameters": { "deadzone_pct": "35", "sub_mode": "click" }, "inputs": { "north": { "output": "/actions/vrcoplay/in/a" } } },
+    { "path": "/user/hand/left/input/trigger", "mode": "trigger", "inputs": { "pull": { "output": "/actions/vrcoplay/in/left_trigger" } } },
+    { "path": "/user/hand/right/input/trigger", "mode": "trigger", "inputs": { "pull": { "output": "/actions/vrcoplay/in/right_trigger" } } },
+    { "path": "/user/hand/left/input/grip", "mode": "button", "inputs": { "click": { "output": "/actions/vrcoplay/in/left_shoulder" } } },
+    { "path": "/user/hand/right/input/grip", "mode": "button", "inputs": { "click": { "output": "/actions/vrcoplay/in/right_shoulder" } } },
+    { "path": "/user/hand/left/input/application_menu", "mode": "button", "inputs": { "click": { "output": "/actions/vrcoplay/in/y" } } },
+    { "path": "/user/hand/right/input/application_menu", "mode": "button", "inputs": { "click": { "output": "/actions/vrcoplay/in/b" } } }
+  ] } }
+}

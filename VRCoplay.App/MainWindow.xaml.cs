@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Net.NetworkInformation;
+using System.Runtime.InteropServices;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -31,6 +32,7 @@ public sealed partial class MainWindow : Window
     private Task? _loop;
     private Process? _ffmpeg, _server;
     private WasapiRecorder? _recorder;
+    private VrXInputBridge? _input;
     private HTHUMBNAIL _thumbnail;
     private string _lastLine = "";
 
@@ -139,12 +141,13 @@ public sealed partial class MainWindow : Window
         SetStreamingControls(true);
         Show("Checking the encoder and starting the local server...", InfoBarSeverity.Informational);
         EnsurePortFree();
-        _encoder ??= await PickEncoderAsync(CurrentHandle(target.Pid));
+        _encoder ??= await PickEncoderAsync();
         _target = target;
         _cts = new CancellationTokenSource();
         _server = StartTool(Tool("mediamtx.exe"), [Tool("mediamtx.yml")]);
         await Task.Delay(500, _cts.Token);
         if (_server.HasExited) throw new InvalidOperationException($"MediaMTX stopped. {_lastLine}");
+        _input = new VrXInputBridge();
         _loop = StreamLoopAsync(AudioToggle.IsOn, LowLatencyToggle.IsOn, _cts.Token);
     }
 
@@ -218,6 +221,7 @@ public sealed partial class MainWindow : Window
         }
         finally
         {
+            _input?.Dispose(); _input = null;
             End(_server); _server = null;
             _cts?.Dispose(); _cts = null; _loop = null;
             SetStreamingControls(false);
@@ -236,17 +240,15 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    private async Task<(string Name, string[] Args, bool Cpu)> PickEncoderAsync(nint hwnd)
+    private async Task<(string Name, string[] Args, bool Cpu)> PickEncoderAsync()
     {
-        // Look at https://github.com/FFmpeg/FFmpeg/blob/7b46c6a2a3/libavfilter/vsrc_gfxcapture.c
-        var capture = $"gfxcapture=hwnd={unchecked((ulong)hwnd.ToInt64())}:capture_cursor=0:capture_border=0:display_border=0:max_framerate=1:width=256:height=256";
         foreach (var profile in Encoders)
         {
-            var args = new List<string> { "-hide_banner", "-loglevel", "error", "-f", "lavfi", "-i", capture, "-frames:v", "1", "-an" };
-            if (profile.Cpu) args.AddRange(["-vf", "hwdownload,format=bgra,format=nv12"]);
+            var args = new List<string> { "-hide_banner", "-loglevel", "error", "-f", "lavfi", "-i", "color=size=256x256:rate=1,format=nv12", "-frames:v", "1", "-an" };
             args.AddRange(profile.Args); args.AddRange(["-f", "null", "NUL"]);
             using var probe = StartTool(Tool("ffmpeg.exe"), args);
-            await probe.WaitForExitAsync();
+            try { await probe.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(3)); }
+            catch (TimeoutException) { End(probe); continue; }
             if (probe.ExitCode == 0) return profile;
         }
         throw new InvalidOperationException($"No H.264 encoder is available. {_lastLine}");
@@ -286,8 +288,13 @@ public sealed partial class MainWindow : Window
         process.Refresh();
         if (process.HasExited || process.MainWindowHandle == 0)
             throw new InvalidOperationException("The selected application no longer has a window.");
+        if (IsIconic(process.MainWindowHandle) != 0)
+            throw new InvalidOperationException("Restore the selected application before streaming.");
         return process.MainWindowHandle;
     }
+
+    // https://learn.microsoft.com/windows/win32/api/winuser/nf-winuser-isiconic
+    [DllImport("user32.dll")] private static extern int IsIconic(nint hwnd);
 
     private static void EnsurePortFree()
     {
@@ -301,6 +308,7 @@ public sealed partial class MainWindow : Window
         try { _recorder?.Dispose(); } catch { }
         try { _ffmpeg?.StandardInput.Close(); } catch { }
         End(_ffmpeg); End(_server); _ffmpeg = _server = null;
+        _input?.Dispose(); _input = null;
         _recorder = null; _cts?.Dispose(); _cts = null; _loop = null;
     }
 

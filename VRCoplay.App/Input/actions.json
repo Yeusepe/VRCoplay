@@ -1,0 +1,23 @@
+{
+  "default_bindings": [
+    { "controller_type": "knuckles", "binding_url": "bindings_index.json" },
+    { "controller_type": "oculus_touch", "binding_url": "bindings_touch.json" },
+    { "controller_type": "vive_controller", "binding_url": "bindings_vive.json" },
+    { "controller_type": "generic", "binding_url": "bindings_generic.json" }
+  ],
+  "action_sets": [{ "name": "/actions/vrcoplay", "usage": "leftright" }],
+  "actions": [
+    { "name": "/actions/vrcoplay/in/left_stick", "type": "vector2" },
+    { "name": "/actions/vrcoplay/in/right_stick", "type": "vector2" },
+    { "name": "/actions/vrcoplay/in/left_trigger", "type": "vector1" },
+    { "name": "/actions/vrcoplay/in/right_trigger", "type": "vector1" },
+    { "name": "/actions/vrcoplay/in/left_thumb", "type": "boolean" },
+    { "name": "/actions/vrcoplay/in/right_thumb", "type": "boolean" },
+    { "name": "/actions/vrcoplay/in/left_shoulder", "type": "boolean" },
+    { "name": "/actions/vrcoplay/in/right_shoulder", "type": "boolean" },
+    { "name": "/actions/vrcoplay/in/a", "type": "boolean" },
+    { "name": "/actions/vrcoplay/in/b", "type": "boolean" },
+    { "name": "/actions/vrcoplay/in/x", "type": "boolean" },
+    { "name": "/actions/vrcoplay/in/y", "type": "boolean" }
+  ]
+}

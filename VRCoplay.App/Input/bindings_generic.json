@@ -1,0 +1,13 @@
+{
+  "controller_type": "generic", "name": "VRCoplay - Generic Controller", "description": "VRCoplay Xbox bridge",
+  "bindings": { "/actions/vrcoplay": { "sources": [
+    { "path": "/user/hand/left/input/trackpad", "mode": "trackpad", "inputs": { "position": { "output": "/actions/vrcoplay/in/left_stick" }, "click": { "output": "/actions/vrcoplay/in/left_thumb" } } },
+    { "path": "/user/hand/right/input/trackpad", "mode": "trackpad", "inputs": { "position": { "output": "/actions/vrcoplay/in/right_stick" }, "click": { "output": "/actions/vrcoplay/in/right_thumb" } } },
+    { "path": "/user/hand/left/input/trigger", "mode": "trigger", "inputs": { "pull": { "output": "/actions/vrcoplay/in/left_trigger" } } },
+    { "path": "/user/hand/right/input/trigger", "mode": "trigger", "inputs": { "pull": { "output": "/actions/vrcoplay/in/right_trigger" } } },
+    { "path": "/user/hand/left/input/grip", "mode": "button", "inputs": { "click": { "output": "/actions/vrcoplay/in/left_shoulder" } } },
+    { "path": "/user/hand/right/input/grip", "mode": "button", "inputs": { "click": { "output": "/actions/vrcoplay/in/right_shoulder" } } },
+    { "path": "/user/hand/left/input/application_menu", "mode": "button", "inputs": { "click": { "output": "/actions/vrcoplay/in/y" } } },
+    { "path": "/user/hand/right/input/application_menu", "mode": "button", "inputs": { "click": { "output": "/actions/vrcoplay/in/b" } } }
+  ] } }
+}

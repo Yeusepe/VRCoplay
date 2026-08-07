@@ -1,6 +1,7 @@
 # Third-party notices
 
-VRCoplay bundles or depends on the following software. The corresponding license files are copied into the application package under `Tools`.
+VRCoplay bundles or depends on the following software. License files are copied into the application package under `Tools` or `ThirdParty`.
+VRCoplay itself is licensed under GPL-3.0-or-later; see the repository's `LICENSE` file.
 
 ## FFmpeg
 
@@ -30,6 +31,24 @@ The source revision and complete build configuration needed to reproduce and aud
 - Packages: `Vanara.PInvoke.DwmApi`, `Vanara.PInvoke.Gdi32`, and `Vanara.Core` 5.0.5
 - Source revision: <https://github.com/dahall/Vanara/tree/624318e1e7e294192581291a1e5f5ee3c3d146e2>
 - License: MIT, `Tools/Vanara-LICENSE.txt`
+
+## OpenVR
+
+- SDK: OpenVR SDK 2.15.6, tag `v2.15.6`, commit `0924064316de3effbcd1acf1e309182a2deb1c05`
+- Source: <https://github.com/ValveSoftware/openvr/tree/v2.15.6>
+- Bundled files and exact hashes: `ThirdParty/OpenVR/PIN.json`
+- License: BSD 3-Clause, `ThirdParty/OpenVR/LICENSE`
+
+## VIIPER
+
+- In-process library: libVIIPER 0.7.0, commit `6b71b148a2243fab77ee1a46f4e22e00bd7d5a04`
+- Source: <https://github.com/Alia5/VIIPER/tree/v0.7.0>
+- License: GPL-3.0-or-later, `ThirdParty/VIIPER/LICENSE.txt`
+- Library dependency licenses: `ThirdParty/VIIPER/licenses.txt`
+- Official C header, release asset, and exact hashes: `ThirdParty/VIIPER/`
+- Runtime requirement: separately installed `usbip-win2` 0.9.7.7; it is not bundled by VRCoplay.
+
+VRCoplay links libVIIPER in-process and is therefore distributed under GPL-3.0-or-later.
 
 ## Microsoft Windows App SDK
 

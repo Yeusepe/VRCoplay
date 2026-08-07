@@ -1,0 +1,15 @@
+{
+  "controller_type": "knuckles", "name": "VRCoplay - Index Controller", "description": "VRCoplay Xbox bridge",
+  "bindings": { "/actions/vrcoplay": { "sources": [
+    { "path": "/user/hand/left/input/thumbstick", "mode": "joystick", "inputs": { "position": { "output": "/actions/vrcoplay/in/left_stick" }, "click": { "output": "/actions/vrcoplay/in/left_thumb" } } },
+    { "path": "/user/hand/right/input/thumbstick", "mode": "joystick", "inputs": { "position": { "output": "/actions/vrcoplay/in/right_stick" }, "click": { "output": "/actions/vrcoplay/in/right_thumb" } } },
+    { "path": "/user/hand/left/input/trigger", "mode": "trigger", "inputs": { "pull": { "output": "/actions/vrcoplay/in/left_trigger" } } },
+    { "path": "/user/hand/right/input/trigger", "mode": "trigger", "inputs": { "pull": { "output": "/actions/vrcoplay/in/right_trigger" } } },
+    { "path": "/user/hand/left/input/grip", "mode": "grab", "parameters": { "force_hold_threshold": "0.15", "value_hold_threshold": "1.1" }, "inputs": { "grab": { "output": "/actions/vrcoplay/in/left_shoulder" } } },
+    { "path": "/user/hand/right/input/grip", "mode": "grab", "parameters": { "force_hold_threshold": "0.15", "value_hold_threshold": "1.1" }, "inputs": { "grab": { "output": "/actions/vrcoplay/in/right_shoulder" } } },
+    { "path": "/user/hand/left/input/a", "mode": "button", "inputs": { "click": { "output": "/actions/vrcoplay/in/x" } } },
+    { "path": "/user/hand/left/input/b", "mode": "button", "inputs": { "click": { "output": "/actions/vrcoplay/in/y" } } },
+    { "path": "/user/hand/right/input/a", "mode": "button", "inputs": { "click": { "output": "/actions/vrcoplay/in/a" } } },
+    { "path": "/user/hand/right/input/b", "mode": "button", "inputs": { "click": { "output": "/actions/vrcoplay/in/b" } } }
+  ] } }
+}

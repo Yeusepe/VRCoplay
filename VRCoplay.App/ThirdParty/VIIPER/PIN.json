@@ -1,0 +1,18 @@
+{
+  "repository": "https://github.com/Alia5/VIIPER",
+  "tag": "v0.7.0",
+  "commit": "6b71b148a2243fab77ee1a46f4e22e00bd7d5a04",
+  "releaseAsset": "viiper-libVIIPER-windows-amd64.zip",
+  "sha256": {
+    "viiper-libVIIPER-windows-amd64.zip": "b22690defcc5120db46cc47273fb327f925f5d68d0d15ab0a9bc71eb774a8e28",
+    "libVIIPER.dll": "eb62e9ac6f821e7c34e98943defd5e27bb248c5880a8966a77244e15808b5320",
+    "libVIIPER.def": "5639123d50f632959b7318c2e3c7d4dd3255fdef5d499054d06ff1b94c07596a",
+    "libVIIPER.h": "36eb8e6c754c6478c55f40fe9141b7e4bc0c4e9d63323952a57b5000ac96f2ce",
+    "licenses.txt": "5b586282a049ab710c6d43561d0ef8f9cd49966bf45a22b3bb56cffd9922f1b8",
+    "LICENSE.txt": "f24ee094842dc3347a7a06b71373573ce18f6dcb935c81e95623723ee22e6ca6"
+  },
+  "runtimeDriver": {
+    "repository": "https://github.com/vadimgrn/usbip-win2",
+    "version": "0.9.7.7"
+  }
+}

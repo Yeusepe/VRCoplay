@@ -45,7 +45,13 @@
 
   <ItemGroup>
     <Content Include="Tools\**\*" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\LICENSE" Link="VRCoplay-LICENSE.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="THIRD-PARTY-NOTICES.md" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Input\*.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="ThirdParty\OpenVR\openvr_api.dll*" Link="%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="ThirdParty\OpenVR\LICENSE;ThirdParty\OpenVR\PIN.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="ThirdParty\VIIPER\libVIIPER.dll" Link="libVIIPER.dll" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="ThirdParty\VIIPER\libVIIPER.def;ThirdParty\VIIPER\libVIIPER.h;ThirdParty\VIIPER\LICENSE.txt;ThirdParty\VIIPER\licenses.txt;ThirdParty\VIIPER\PIN.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
