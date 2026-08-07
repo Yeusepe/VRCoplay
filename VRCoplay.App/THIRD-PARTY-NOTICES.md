@@ -55,4 +55,10 @@ VRCoplay links libVIIPER in-process and is therefore distributed under GPL-3.0-o
 - Package: `Microsoft.WindowsAppSDK` 2.3.1
 - Project and license information: <https://github.com/microsoft/WindowsAppSDK>
 
+## Windows Community Toolkit
+
+- Package: `CommunityToolkit.WinUI.Controls.SettingsControls` 8.2.251219
+- Source revision: <https://github.com/CommunityToolkit/Windows/tree/a6b4dc451c0e54dd29f58743894a956100e7f713>
+- License: MIT
+
 Exact hashes of the native tools and production configuration are in `Tools/SHA256SUMS.txt`.
